@@ -13,10 +13,6 @@ use App\Http\Controllers\DataRecordsController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('index');
-// });
-
 Route::get('/', [DataRecordsController::class, 'index'])->name('data_records.index');
 Route::get('/create', [DataRecordsController::class, 'create'])->name('data_records.create');
 Route::post('/store', [DataRecordsController::class, 'store'])->name('data_records.store');

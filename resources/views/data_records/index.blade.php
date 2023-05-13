@@ -3,6 +3,7 @@
 @section('title', 'Data Records')
 
 @section('content')
+    
     <h1>User Records</h1>
 
     <a href="{{ route('data_records.create') }}" class="create-button" id="create">
@@ -23,6 +24,10 @@
         <button id ="search" type="submit">Search</button>
     </form>
     
+    @if(session('deleteSuccess'))
+        <p class="success-message" style="background-color: #3CB371; color: #FFFFFF; padding: 10px;">{{ session('deleteSuccess') }}</p>
+    @endif
+
     <table>
         <thead>
             <tr>
