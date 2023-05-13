@@ -86,43 +86,42 @@
     </style>
 @endsection
 @section('scripts')
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Show spinner overlay
             function showSpinner() {
                 $('#spinner-overlay').fadeIn();
             }
-
-            // Hide spinner overlay
             function hideSpinner() {
                 $('#spinner-overlay').fadeOut();
             }
-
-            // Trigger spinner on link click
-            $('.update').click(function(e) {
-                e.preventDefault(); // Prevent default link behavior
-
-                // Show spinner overlay
+             $('.update-form').submit(function(e) {
+                e.preventDefault(); 
                 showSpinner();
-
-                // Delay the navigation to the new page
-                setTimeout(function() {
-                    // Navigate to the new page
-                    window.location.href = "{{ route('data_records.index') }}";
-                }, 1000); // Adjust the delay duration (in milliseconds) as per your requirement
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        hideSpinner();
+                        $('.success-message').text(response.success).show();
+                        window.location.href = "{{ route('data_records.index') }}";
+                    },
+                    error: function(xhr, status, error) {
+                        hideSpinner();
+                    }
+                });
             });
 
-            // Listen for the pageshow event when navigating back
             window.addEventListener('pageshow', function(event) {
                 if (event.persisted) {
-                    // Show spinner overlay
                     showSpinner();
-
-                    // Delay hiding the spinner for 1 second
                     setTimeout(function() {
-                        // Hide spinner overlay
                         hideSpinner();
-                    }, 1000); // Adjust the delay duration (in milliseconds) as per your requirement
+                    }, 1000); 
                 }
             });
         });

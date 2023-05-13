@@ -16,7 +16,6 @@ class DataRecordsController extends Controller
     {
         $dataRecords = DataRecord::all();
         return view('data_records.index', compact('dataRecords'));
-
     }
 
     /**
@@ -48,8 +47,7 @@ class DataRecordsController extends Controller
         ]);
 
         DataRecord::create($validatedData);
-        return redirect()->route('data_records.index')->with('success', 'New record created successfully.');
-
+        return redirect()->route('data_records.index')->with('createSuccess', 'New record created successfully.');
     }
 
     /**
@@ -96,7 +94,7 @@ class DataRecordsController extends Controller
 
         $dataRecord = DataRecord::findOrFail($id);
         $dataRecord->update($validatedData);
-        return redirect()->route('data_records.index')->with('success', 'Record updated successfully.');
+        return redirect()->route('data_records.index')->with('createSuccess', 'Record updated successfully.');
     }
 
     /**
@@ -109,7 +107,7 @@ class DataRecordsController extends Controller
     {
         $dataRecord = DataRecord::findOrFail($id);
         $dataRecord->delete();
-        return redirect()->route('data_records.index')->with('success', 'Record deleted successfully.');
+        return redirect()->route('data_records.index')->with('deleteSuccess', 'Record deleted successfully.');
     }
 
     public function search(Request $request)

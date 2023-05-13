@@ -10,6 +10,11 @@
         <i class="fa fa-plus"></i>Create New Record
     </a>
 
+    {{-- @if ($successMessage)
+    <div class="alert alert-success">
+        {{ $successMessage }}
+    </div>
+    @endif --}}
     <form action="{{ route('data_records.search') }}" method="GET">
         <select name="searchField">
             <option value="name">Name</option>
@@ -24,13 +29,22 @@
         <button id ="search" type="submit">Search</button>
     </form>
 
-    @if(session('success'))
-        <p class="success-message">{{ session('success') }}</p>
+    @if (session('deleteSuccess'))
+        <div class="alert alert-success" style="background-color: #d4edda; color: #155724; padding: 10px; margin-top: 10px;">
+            {{ session('deleteSuccess') }}
+        </div>
+    @endif
+
+    @if (session('createSuccess'))
+        <div class="alert alert-success" style="background-color: #d4edda; color: #155724; padding: 10px; margin-top: 10px;">
+            {{ session('createSuccess') }}
+        </div>
     @endif
 
     <table>
         <thead>
             <tr>
+                <th>#</th> <!-- Additional column for numbering -->
                 <th>Name</th>
                 <th>Address</th>
                 <th>City</th>
@@ -42,8 +56,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($dataRecords as $record)
+            @foreach($dataRecords as $index => $record)
                 <tr>
+                    <td>{{ $index + 1 }}</td> <!-- Display the numbering -->
                     <td>{{ $record->name }}</td>
                     <td>{{ $record->address }}</td>
                     <td>{{ $record->city }}</td>
@@ -51,13 +66,6 @@
                     <td>{{ $record->zip }}</td>
                     <td>{{ $record->phone }}</td>
                     <td>{{ $record->email }}</td>
-                    {{-- <td>
-                        <a href="{{ route('data_records.edit', $record->id) }}">Edit</a>
-                        <form action="{{ route('data_records.destroy', $record->id) }}" method="POST">
-                            @csrf
-                            <button type="submit">Delete</button>
-                        </form>
-                    </td> --}}
                     <td class="icon-cell">
                         <a href="{{ route('data_records.edit', $record->id) }}" class="edit-link">
                             <i class="fa fa-edit edit-icon"></i>
@@ -79,7 +87,7 @@
     </div>
 @endsection
 
-@section('styles')
+@section('index_styles')
     <style>
         /* Styles for the spinner overlay */
         #spinner-overlay {
@@ -112,61 +120,44 @@
         }
     </style>
 @endsection
-@section('scripts')
+
+@section('index_scripts')
     <script>
         $(document).ready(function() {
-            // Show spinner overlay
             function showSpinner() {
+                console.log('Showing spinner');
                 $('#spinner-overlay').fadeIn();
             }
-
-            // Hide spinner overlay
             function hideSpinner() {
+                console.log('Hiding spinner');
                 $('#spinner-overlay').fadeOut();
             }
 
-            // Trigger spinner on link click
             $('.create-button').click(function(e) {
-                e.preventDefault(); // Prevent default link behavior
-
-                // Show spinner overlay
+                e.preventDefault(); 
+                console.log('Create button clicked')
                 showSpinner();
-
-                // Delay the navigation to the new page
                 setTimeout(function() {
-                    // Navigate to the new page
                     window.location.href = "{{ route('data_records.create') }}";
-                }, 1000); // Adjust the delay duration (in milliseconds) as per your requirement
+                }, 1000); 
             });
 
-            // Trigger spinner on edit icon click
             $('.edit-link').click(function(e) {
-                e.preventDefault(); // Prevent default link behavior
-
-                // Show spinner overlay
+                e.preventDefault(); 
                 showSpinner();
-
-                // Get the URL from the href attribute of the link
                 var url = $(this).attr('href');
-
-                // Delay the navigation to the new page
                 setTimeout(function() {
-                    // Navigate to the new page
                     window.location.href = url;
-                }, 1000); // Adjust the delay duration (in milliseconds) as per your requirement
+                }, 1000); 
             });
-            
-            // Listen for the pageshow event when navigating back
+  
             window.addEventListener('pageshow', function(event) {
                 if (event.persisted) {
-                    // Show spinner overlay
+                    console.log('Page persisted');
                     showSpinner();
-
-                    // Delay hiding the spinner for 1 second
                     setTimeout(function() {
-                        // Hide spinner overlay
                         hideSpinner();
-                    }, 1000); // Adjust the delay duration (in milliseconds) as per your requirement
+                    }, 1000); 
                 }
             });
         });

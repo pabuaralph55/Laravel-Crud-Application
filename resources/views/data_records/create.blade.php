@@ -6,6 +6,12 @@
 
 <h1 class="create-heading">Create New Data Record</h1>
 
+{{-- @if (session('errorMessage'))
+        <div class="alert alert-danger">
+            {{ session('errorMessage') }}
+        </div>
+@endif --}}
+
 <form action="{{ route('data_records.store') }}" method="POST" class="create-form">
     @csrf
     <div>
@@ -42,8 +48,11 @@
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required>
     </div>
-    
-    <button type="submit" id="createSubmit">Create</button>
+    @if ($errors->has('email') && old('email'))
+        <div class="alert alert-danger">{{ $errors->first('email') }}</div>
+    @endif
+    <button type="submit" class="create-record">Create</button>
+
     <!-- Spinner markup -->
     <div id="spinner-overlay">
         <div class="spinner"></div>
@@ -82,46 +91,44 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
     </style>
 @endsection
 @section('scripts')
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Show spinner overlay
             function showSpinner() {
                 $('#spinner-overlay').fadeIn();
             }
-
-            // Hide spinner overlay
             function hideSpinner() {
                 $('#spinner-overlay').fadeOut();
             }
-
-            // Trigger spinner on link click
-            $('#createSubmit').click(function(e) {
-                e.preventDefault(); // Prevent default link behavior
-
-                // Show spinner overlay
+            $('.create-form').submit(function(e) {
+                e.preventDefault();
                 showSpinner();
-
-                // Delay the navigation to the new page
-                setTimeout(function() {
-                    // Navigate to the new page
-                    window.location.href = "{{ route('data_records.index') }}";
-                }, 1000); // Adjust the delay duration (in milliseconds) as per your requirement
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        hideSpinner();
+                        window.location.href = "{{ route('data_records.index') }}";
+                    },
+                    error: function(xhr, status, error) {
+                        hideSpinner();
+                    }
+                });
             });
-
-            // Listen for the pageshow event when navigating back
             window.addEventListener('pageshow', function(event) {
                 if (event.persisted) {
-                    // Show spinner overlay
                     showSpinner();
-
-                    // Delay hiding the spinner for 1 second
                     setTimeout(function() {
-                        // Hide spinner overlay
                         hideSpinner();
-                    }, 1000); // Adjust the delay duration (in milliseconds) as per your requirement
+                    }, 1000); 
                 }
             });
         });
