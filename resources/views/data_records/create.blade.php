@@ -4,46 +4,33 @@
 
 @section('content')
 
-<h1 class="create-heading">Create New Data Record</h1>
-
-{{-- @if (session('errorMessage'))
-        <div class="alert alert-danger">
-            {{ session('errorMessage') }}
-        </div>
-@endif --}}
-
+<h1 class="create-heading">User Information</h1>
 <form action="{{ route('data_records.store') }}" method="POST" class="create-form">
     @csrf
     <div>
         <label for="name">Name:</label>
         <input type="text" name="name" id="name" required>
     </div>
-    
     <div>
         <label for="address">Address:</label>
         <input type="text" name="address" id="address" required>
     </div>
-    
     <div>
         <label for="city">City:</label>
         <input type="text" name="city" id="city" required>
     </div>
-    
     <div>
         <label for="state">State:</label>
         <input type="text" name="state" id="state" required>
     </div>
-    
     <div>
         <label for="zip">ZIP:</label>
         <input type="text" name="zip" id="zip" required>
     </div>
-    
     <div>
         <label for="phone">Phone:</label>
         <input type="text" name="phone" id="phone" required>
     </div>
-    
     <div>
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required>

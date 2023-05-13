@@ -7,7 +7,7 @@
 
     {{-- <a href="{{ route('data_records.create') }}">Create New Record</a> --}}
     <a href="{{ route('data_records.create') }}" class="create-button" id="create">
-        <i class="fa fa-plus"></i>Create New Record
+        <i class="fa fa-plus"></i>Add New User
     </a>
 
     {{-- @if ($successMessage)

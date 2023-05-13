@@ -4,7 +4,7 @@
 
 @section('content')
 
-<h1 class="update-heading">Edit Data Record</h1>
+<h1 class="update-heading">Edit User Information</h1>
 
 <form action="{{ route('data_records.update', $dataRecord->id) }}" method="POST" class="update-form">
     @csrf
