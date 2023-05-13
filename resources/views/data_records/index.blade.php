@@ -5,16 +5,10 @@
 @section('content')
     <h1>User Records</h1>
 
-    {{-- <a href="{{ route('data_records.create') }}">Create New Record</a> --}}
     <a href="{{ route('data_records.create') }}" class="create-button" id="create">
         <i class="fa fa-plus"></i>Add New User
     </a>
 
-    {{-- @if ($successMessage)
-    <div class="alert alert-success">
-        {{ $successMessage }}
-    </div>
-    @endif --}}
     <form action="{{ route('data_records.search') }}" method="GET">
         <select name="searchField">
             <option value="name">Name</option>
@@ -28,19 +22,7 @@
         <input type="text" name="searchValue" placeholder="Search">
         <button id ="search" type="submit">Search</button>
     </form>
-
-    @if (session('deleteSuccess'))
-        <div class="alert alert-success" style="background-color: #d4edda; color: #155724; padding: 10px; margin-top: 10px;">
-            {{ session('deleteSuccess') }}
-        </div>
-    @endif
-
-    @if (session('createSuccess'))
-        <div class="alert alert-success" style="background-color: #d4edda; color: #155724; padding: 10px; margin-top: 10px;">
-            {{ session('createSuccess') }}
-        </div>
-    @endif
-
+    
     <table>
         <thead>
             <tr>
@@ -125,17 +107,14 @@
     <script>
         $(document).ready(function() {
             function showSpinner() {
-                console.log('Showing spinner');
                 $('#spinner-overlay').fadeIn();
             }
             function hideSpinner() {
-                console.log('Hiding spinner');
                 $('#spinner-overlay').fadeOut();
             }
 
             $('.create-button').click(function(e) {
                 e.preventDefault(); 
-                console.log('Create button clicked')
                 showSpinner();
                 setTimeout(function() {
                     window.location.href = "{{ route('data_records.create') }}";

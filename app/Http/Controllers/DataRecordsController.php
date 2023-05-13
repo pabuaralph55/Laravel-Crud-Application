@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DataRecord;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DataRecordsController extends Controller
 {
@@ -25,7 +26,10 @@ class DataRecordsController extends Controller
      */
     public function create()
     {
-        return view('data_records.create');
+        // return view('data_records.create');
+
+        $errorMessage = session('errorMessage');
+        return view('data_records.create', compact('errorMessage'));
     }
 
     /**
@@ -47,7 +51,7 @@ class DataRecordsController extends Controller
         ]);
 
         DataRecord::create($validatedData);
-        return redirect()->route('data_records.index')->with('createSuccess', 'New record created successfully.');
+        return redirect()->route('data_records.index');
     }
 
     /**
@@ -81,21 +85,27 @@ class DataRecordsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required',
-            'address' => 'required',
-            'city' => 'required',
-            'state' => 'required',
-            'zip' => 'required',
-            'phone' => 'required',
-            'email' => 'required|email|unique:data_records1,email,' . $id,
-        ]);
-
-        $dataRecord = DataRecord::findOrFail($id);
-        $dataRecord->update($validatedData);
-        return redirect()->route('data_records.index')->with('createSuccess', 'Record updated successfully.');
-    }
+{
+    $rules = [
+        'name' => 'required',
+        'address' => 'required',
+        'city' => 'required',
+        'state' => 'required',
+        'zip' => 'required',
+        'phone' => 'required',
+        'email' => [
+            'required',
+            'email',
+            Rule::unique('data_records1')->ignore($id),
+        ],
+    ];
+        
+    $validatedData = $request->validate($rules);
+        
+    $dataRecord = DataRecord::find($id);
+    $dataRecord->update($validatedData);
+    return redirect()->route('data_records.index');
+}
 
     /**
      * Remove the specified resource from storage.

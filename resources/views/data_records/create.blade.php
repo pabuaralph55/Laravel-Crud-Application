@@ -5,7 +5,7 @@
 @section('content')
 
 <h1 class="create-heading">User Information</h1>
-<form action="{{ route('data_records.store') }}" method="POST" class="create-form">
+<form action="{{ route('data_records.store') }}" method="POST" class="create-form" id="create-record">
     @csrf
     <div>
         <label for="name">Name:</label>
@@ -35,16 +35,14 @@
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required>
     </div>
-    @if ($errors->has('email') && old('email'))
-        <div class="alert alert-danger">{{ $errors->first('email') }}</div>
-    @endif
+    <div id="error-message" class="alert alert-danger" style="display: none;"></div>
     <button type="submit" class="create-record">Create</button>
-
-    <!-- Spinner markup -->
-    <div id="spinner-overlay">
-        <div class="spinner"></div>
-    </div>
 </form>
+
+<!-- Spinner markup -->
+<div id="spinner-overlay">
+    <div class="spinner"></div>
+</div>
 @endsection
 
 @section('styles')
@@ -86,30 +84,59 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function(e) {
+
             function showSpinner() {
                 $('#spinner-overlay').fadeIn();
             }
             function hideSpinner() {
                 $('#spinner-overlay').fadeOut();
             }
-            $('.create-form').submit(function(e) {
+            // Retrieve the CSRF token from the meta tag
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            // Add the CSRF token to the headers of all AJAX requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+
+            $('#create-record').submit(function(e) {
                 e.preventDefault();
-                showSpinner();
-                var formData = $(this).serialize();
+
+                // Collect data from input fields
+                var formData = {
+                    name: $('#name').val(),
+                    address: $('#address').val(),
+                    city: $('#city').val(),
+                    state: $('#state').val(),
+                    zip: $('#zip').val(),
+                    phone: $('#phone').val(),
+                    email: $('#email').val()
+                };
+
+                // Send data to the backend using AJAX
                 $.ajax({
                     url: $(this).attr('action'),
-                    type: 'POST',
+                    type: $(this).attr('method'),
                     data: formData,
                     success: function(response) {
-                        hideSpinner();
-                        window.location.href = "{{ route('data_records.index') }}";
+                        showSpinner();
+                        setTimeout(function() {
+                            hideSpinner();
+                            window.location.href = "{{ route('data_records.index') }}";
+                        }, 1000);
                     },
                     error: function(xhr, status, error) {
+                        var response = JSON.parse(xhr.responseText); // Parse the JSON error response
+                        var errorMessage = response.errors.email[0]; // Extract the specific error message
+                        $('#error-message').text(errorMessage).show(); // Display the error message
                         hideSpinner();
                     }
                 });
             });
+
             window.addEventListener('pageshow', function(event) {
                 if (event.persisted) {
                     showSpinner();

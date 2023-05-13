@@ -24,3 +24,4 @@ Route::get('/{id}/edit', [DataRecordsController::class, 'edit'])->name('data_rec
 Route::put('/{id}/update', [DataRecordsController::class, 'update'])->name('data_records.update');
 Route::post('/{id}/delete', [DataRecordsController::class, 'destroy'])->name('data_records.destroy');
 Route::get('/search', [DataRecordsController::class, 'search'])->name('data_records.search');
+// Route::put('/data_records/{id}', [DataRecordsController::class, 'update']);
